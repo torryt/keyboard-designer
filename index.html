@@ -115,8 +115,8 @@
 
   /* ---- HSL-finvelger ---- */
   .hsl{margin-top:18px; display:grid; gap:13px; max-width:540px}
-  .hsl-row{display:grid; grid-template-columns:78px 1fr 78px; align-items:center; gap:13px}
-  .hsl-row > label{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600}
+  .hsl-row{display:grid; grid-template-columns:1fr auto; align-items:center; column-gap:13px; row-gap:8px}
+  .hsl-row > label{grid-column:1 / -1; margin:0 0 -2px 2px; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600}
   .hsl-slider{
     -webkit-appearance:none; appearance:none; width:100%; height:14px; margin:0;
     border-radius:8px; border:1px solid var(--line); cursor:pointer;
@@ -144,7 +144,7 @@
   .step:active{background:#e8e5dc}
   .hsl-num{
     font-family:ui-monospace,Menlo,Consolas,monospace; font-size:14px;
-    width:100%; min-width:0; height:30px; padding:0 4px; text-align:center;
+    width:56px; min-width:0; height:30px; padding:0 6px; text-align:center;
     border:1px solid var(--line); background:#fff; color:var(--ink);
     -moz-appearance:textfield;
   }
