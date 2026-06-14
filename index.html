@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tastatur – rammefarge</title>
+<style>
+  :root{
+    --bg:#e7e4dc; --bg2:#dedacf;
+    --ink:#2b2b2b; --muted:#6f6c63;
+    --gold:#c5a253; --line:#cbc6ba;
+    --card:#f3f1ea;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    min-height:100vh;
+    background:radial-gradient(120% 120% at 50% 0%, var(--bg) 0%, var(--bg2) 100%);
+    color:var(--ink);
+    font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+    display:flex; align-items:center; justify-content:center;
+    padding:28px 18px;
+  }
+  .wrap{width:100%; max-width:880px}
+  .eyebrow{
+    font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--muted); margin:0 0 14px 2px; font-weight:600;
+  }
+  .stage{
+    width:100%;
+    border-radius:18px;
+    padding:8px;
+    display:flex; justify-content:center;
+  }
+  .stage svg{width:100%; height:auto; display:block}
+
+  .panel{
+    margin-top:22px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:18px 18px 20px;
+    box-shadow:0 1px 0 rgba(255,255,255,.6) inset;
+  }
+  .row{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .picker{
+    position:relative; width:54px; height:54px; border-radius:12px;
+    border:1px solid var(--line); overflow:hidden; cursor:pointer;
+    box-shadow:0 1px 2px rgba(0,0,0,.12);
+    flex:0 0 auto;
+  }
+  .picker{cursor:default}
+  .field label{display:block; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:5px; font-weight:600}
+  .hex{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:16px; letter-spacing:.02em;
+    width:120px; padding:9px 11px; border-radius:9px;
+    border:1px solid var(--line); background:#fff; color:var(--ink);
+    text-transform:uppercase;
+  }
+  .hex:focus{outline:2px solid var(--gold); outline-offset:1px; border-color:var(--gold)}
+  .spacer{flex:1 1 auto}
+  .download{
+    appearance:none; cursor:pointer; font:inherit; font-weight:600; font-size:14px;
+    color:#5e4d20; background:#f4ead0;
+    border:1px solid var(--gold); border-radius:10px; padding:10px 16px;
+    transition:background .15s ease, transform .05s ease;
+  }
+  .download:hover{background:#efe0bd}
+  .download:active{transform:translateY(1px)}
+  .download:focus-visible{outline:2px solid var(--gold); outline-offset:2px}
+
+  .presets{margin-top:16px}
+  .presets .field label{margin-bottom:9px}
+  .swatches{display:flex; gap:10px; flex-wrap:wrap}
+  .sw{
+    cursor:pointer; border:0; background:transparent; padding:0;
+    display:flex; flex-direction:column; align-items:center; gap:6px; width:64px;
+  }
+  .chip{
+    width:46px; height:46px; border-radius:11px;
+    border:1px solid rgba(0,0,0,.14);
+    box-shadow:0 1px 2px rgba(0,0,0,.12);
+    transition:transform .08s ease, box-shadow .15s ease;
+  }
+  .sw[aria-pressed=true] .chip{
+    box-shadow:0 0 0 2px var(--card), 0 0 0 4px var(--gold);
+  }
+  .sw:hover .chip{transform:translateY(-2px)}
+  .sw small{font-size:11px; color:var(--muted); line-height:1.15; text-align:center}
+  .sw:focus-visible{outline:none}
+  .sw:focus-visible .chip{box-shadow:0 0 0 2px var(--card), 0 0 0 4px var(--gold)}
+
+  .save{
+    appearance:none; cursor:pointer; font:inherit; font-weight:600; font-size:14px;
+    color:var(--ink); background:#fff;
+    border:1px solid var(--line); border-radius:10px; padding:10px 16px;
+    transition:background .15s ease, transform .05s ease;
+  }
+  .save:hover{background:#f0eee6}
+  .save:active{transform:translateY(1px)}
+  .save:focus-visible{outline:2px solid var(--gold); outline-offset:2px}
+
+  .empty{font-size:12px; color:var(--muted); margin:0}
+  .sw .del{
+    position:absolute; top:-6px; right:6px; width:18px; height:18px;
+    border-radius:50%; border:1px solid var(--line); background:#fff; color:var(--muted);
+    font-size:12px; line-height:1; cursor:pointer; padding:0;
+    display:none; align-items:center; justify-content:center;
+    box-shadow:0 1px 2px rgba(0,0,0,.18);
+  }
+  .sw{position:relative}
+  .sw:hover .del, .sw:focus-within .del{display:flex}
+  .sw .del:hover{color:#b1432f; border-color:#b1432f}
+
+  /* ---- HSL-finvelger ---- */
+  .hsl{margin-top:18px; display:grid; gap:13px; max-width:540px}
+  .hsl-row{display:grid; grid-template-columns:78px 1fr 78px; align-items:center; gap:13px}
+  .hsl-row > label{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600}
+  .hsl-slider{
+    -webkit-appearance:none; appearance:none; width:100%; height:14px; margin:0;
+    border-radius:8px; border:1px solid var(--line); cursor:pointer;
+  }
+  .hsl-slider:focus-visible{outline:2px solid var(--gold); outline-offset:2px}
+  .hsl-slider::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none; width:18px; height:18px; border-radius:50%;
+    background:#fff; border:2px solid #fff; cursor:pointer;
+    box-shadow:0 0 0 1px rgba(0,0,0,.4), 0 1px 3px rgba(0,0,0,.35);
+  }
+  .hsl-slider::-moz-range-thumb{
+    width:16px; height:16px; border-radius:50%;
+    background:#fff; border:2px solid #fff; cursor:pointer;
+    box-shadow:0 0 0 1px rgba(0,0,0,.4), 0 1px 3px rgba(0,0,0,.35);
+  }
+  .num{display:flex; align-items:center; gap:0}
+  .step{
+    appearance:none; cursor:pointer; width:24px; height:30px; flex:0 0 auto;
+    border:1px solid var(--line); background:#fff; color:var(--muted);
+    font-size:15px; line-height:1; padding:0; user-select:none;
+  }
+  .step:first-child{border-radius:8px 0 0 8px; border-right:0}
+  .step:last-child{border-radius:0 8px 8px 0; border-left:0}
+  .step:hover{background:#f0eee6; color:var(--ink)}
+  .step:active{background:#e8e5dc}
+  .hsl-num{
+    font-family:ui-monospace,Menlo,Consolas,monospace; font-size:14px;
+    width:100%; min-width:0; height:30px; padding:0 4px; text-align:center;
+    border:1px solid var(--line); background:#fff; color:var(--ink);
+    -moz-appearance:textfield;
+  }
+  .hsl-num::-webkit-outer-spin-button,.hsl-num::-webkit-inner-spin-button{-webkit-appearance:none; margin:0}
+  .hsl-num:focus{outline:none; border-color:var(--gold); box-shadow:0 0 0 2px rgba(197,162,83,.35)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="eyebrow">Tastatur · velg rammefarge</p>
+    <div class="stage" id="stage"></div>
+
+    <div class="panel">
+      <div class="row">
+        <span class="picker" id="preview" role="img" aria-label="Forhåndsvisning av valgt farge"></span>
+        <div class="field">
+          <label for="hex">Rammefarge</label>
+          <input class="hex" id="hex" value="#5B8A77" spellcheck="false" maxlength="7" aria-label="Hex-verdi for rammefarge">
+        </div>
+        <div class="spacer"></div>
+        <button class="save" id="save">Lagre farge</button>
+        <button class="download" id="dl">Last ned SVG</button>
+      </div>
+
+      <div class="hsl field" id="hslPicker">
+        <div class="hsl-row">
+          <label for="hueN">Nyanse</label>
+          <input class="hsl-slider" id="hueR" type="range" min="0" max="360" step="1" aria-label="Nyanse (skyveknapp)">
+          <span class="num">
+            <button class="step" type="button" data-for="hue" data-d="-1" aria-label="Nyanse ned">−</button>
+            <input class="hsl-num" id="hueN" type="number" min="0" max="360" step="1" aria-label="Nyanse i grader">
+            <button class="step" type="button" data-for="hue" data-d="1" aria-label="Nyanse opp">+</button>
+          </span>
+        </div>
+        <div class="hsl-row">
+          <label for="satN">Metning</label>
+          <input class="hsl-slider" id="satR" type="range" min="0" max="100" step="1" aria-label="Metning (skyveknapp)">
+          <span class="num">
+            <button class="step" type="button" data-for="sat" data-d="-1" aria-label="Metning ned">−</button>
+            <input class="hsl-num" id="satN" type="number" min="0" max="100" step="1" aria-label="Metning i prosent">
+            <button class="step" type="button" data-for="sat" data-d="1" aria-label="Metning opp">+</button>
+          </span>
+        </div>
+        <div class="hsl-row">
+          <label for="ligN">Lyshet</label>
+          <input class="hsl-slider" id="ligR" type="range" min="0" max="100" step="1" aria-label="Lyshet (skyveknapp)">
+          <span class="num">
+            <button class="step" type="button" data-for="lig" data-d="-1" aria-label="Lyshet ned">−</button>
+            <input class="hsl-num" id="ligN" type="number" min="0" max="100" step="1" aria-label="Lyshet i prosent">
+            <button class="step" type="button" data-for="lig" data-d="1" aria-label="Lyshet opp">+</button>
+          </span>
+        </div>
+      </div>
+
+      <div class="presets field">
+        <label>Forhåndsvalg</label>
+        <div class="swatches" id="swatches"></div>
+      </div>
+
+      <div class="presets field">
+        <label>Mine farger</label>
+        <div class="swatches" id="myswatches"></div>
+        <p class="empty" id="myempty">Ingen lagrede farger ennå. Velg en farge og trykk «Lagre farge».</p>
+      </div>
+    </div>
+  </div>
+
+<script src="app.js"></script>
+</body>
+</html>
